@@ -158,6 +158,7 @@ git_clone(https://github.com/cactus/gostrftime 4544856e3a415ff5668bb75fed3672624
 git_clone(https://github.com/golang/snappy eaa750b9bf4dcb7cb20454be850613b66cda3273)
 git_clone(https://github.com/rafrombrc/sarama fda3e239249dd96f4a2c446aea39dfc823f4030a)
 add_dependencies(sarama snappy)
+git_clone(https://github.com/bsm/ratelimit v1)
 
 if (INCLUDE_GEOIP)
     add_external_plugin(git https://github.com/abh/geoip da130741c8ed2052f5f455d56e552f2e997e1ce9)

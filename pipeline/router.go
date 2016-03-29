@@ -25,6 +25,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/bsm/ratelimit"
 	"github.com/mozilla-services/heka/message"
 )
 
@@ -225,6 +226,7 @@ type MatchRunner struct {
 	bufFeeder     *BufferFeeder
 	globals       *GlobalConfigStruct
 	retry         *RetryHelper
+	rateLimiter   *ratelimit.RateLimiter
 }
 
 // Creates and returns a new MatchRunner if possible, or a relevant error if
@@ -248,6 +250,7 @@ func NewMatchRunner(filter, signer string, runner PluginRunner, chanSize int,
 		matchChan:    matchChan,
 		pluginRunner: runner,
 		retry:        retry,
+		rateLimiter:  ratelimit.New(1, time.Minute),
 	}
 	return
 }
@@ -337,8 +340,14 @@ func (mr *MatchRunner) run(sampleDenom int) {
 			pack.diagnostics.AddStamp(mr.pluginRunner)
 			err := mr.deliver(pack)
 			if err != nil {
-				mr.pluginRunner.LogError(fmt.Errorf("can't deliver matched message: %s",
-					err))
+				errMsg := fmt.Errorf("can't deliver matched message: %s", err)
+				if err == QueueIsFull {
+					if !mr.rateLimiter.Limit() {
+						mr.pluginRunner.LogError(errMsg)
+					}
+				} else {
+					mr.pluginRunner.LogError(errMsg)
+				}
 			}
 		} else {
 			pack.recycle()
