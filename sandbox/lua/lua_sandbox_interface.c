@@ -144,7 +144,7 @@ int read_config(lua_State* lua)
     }
     const char* name = luaL_checkstring(lua, 1);
 
-    struct go_lua_read_config_return gr;
+    struct go_lua_read_config_result gr;
     // Cast away constness of the Lua string, the value is not modified
     // and it will save a copy.
     gr = go_lua_read_config(lsb_get_parent(lsb), (char*)name);
@@ -189,7 +189,7 @@ int read_message(lua_State* lua)
     int ai = luaL_optinteger(lua, 3, 0);
     luaL_argcheck(lua, ai >= 0, 3, "array index must be >= 0");
 
-    struct go_lua_read_message_return gr;
+    struct go_lua_read_message_result gr;
     // Cast away constness of the Lua string, the value is not modified
     // and it will save a copy.
     gr = go_lua_read_message(lsb_get_parent(lsb), (char*)field, fi, ai);
@@ -300,7 +300,7 @@ int read_next_field(lua_State* lua)
         luaL_error(lua, "read_next_field() takes no arguments");
     }
 
-    struct go_lua_read_next_field_return gr;
+    struct go_lua_read_next_field_result gr;
     gr = go_lua_read_next_field(lsb_get_parent(lsb));
     if (!gr.r1) { // a null name is the end of the field array
         lua_pushnil(lua);
