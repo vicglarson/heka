@@ -19,7 +19,7 @@ if(INCLUDE_SANDBOX)
     externalproject_add(
         ${SANDBOX_PACKAGE}
         GIT_REPOSITORY https://github.com/mozilla-services/lua_sandbox.git
-        GIT_TAG 4bf74cc480c2306fcffe1e423186e115cc87222d
+        GIT_TAG 7abcb7c661c13c970fb9e928e428551671244911         
         CMAKE_ARGS ${SANDBOX_ARGS}
         INSTALL_DIR ${PROJECT_PATH}
     )
@@ -137,7 +137,7 @@ endfunction(add_external_plugin)
 
 git_clone(https://github.com/rafrombrc/gomock c922279faf77f29ce5781e96eb0711837fcb477c)
 add_custom_command(TARGET gomock POST_BUILD
-COMMAND ${GO_EXECUTABLE} install github.com/rafrombrc/gomock/mockgen)
+COMMAND ${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} github.com/rafrombrc/gomock/mockgen)
 git_clone(https://github.com/bitly/go-simplejson ec501b3f691bcc79d97caf8fdf28bcf136efdab8)
 git_clone(https://github.com/rafrombrc/whisper-go 89e9ba3b5c6a10d8ac43bd1a25371f3e6118c37f)
 git_clone(https://github.com/rafrombrc/go-notify e3ddb616eea90d4e87dff8513c251ff514678406)
@@ -177,7 +177,7 @@ endif()
 git_clone(https://github.com/pborman/uuid ca53cad383cad2479bbba7f7a1a05797ec1386e4)
 git_clone(https://github.com/gogo/protobuf 7d21ffbc76b992157ec7057b69a1529735fbab21)
 add_custom_command(TARGET protobuf POST_BUILD
-COMMAND ${GO_EXECUTABLE} install github.com/gogo/protobuf/protoc-gen-gogo)
+COMMAND ${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} github.com/gogo/protobuf/protoc-gen-gogo)
 
 include(plugin_loader OPTIONAL)
 
