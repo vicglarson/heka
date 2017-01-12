@@ -20,11 +20,11 @@
 package plugins
 
 import (
-	. "github.com/mozilla-services/heka/pipeline"
-	_ "github.com/mozilla-services/heka/plugins/payload"
-	_ "github.com/mozilla-services/heka/plugins/statsd"
-	ts "github.com/mozilla-services/heka/plugins/testsupport"
-	_ "github.com/mozilla-services/heka/plugins/udp"
+	. "github.com/vicglarson/heka/pipeline"
+	_ "github.com/vicglarson/heka/plugins/payload"
+	_ "github.com/vicglarson/heka/plugins/statsd"
+	ts "github.com/vicglarson/heka/plugins/testsupport"
+	_ "github.com/vicglarson/heka/plugins/udp"
 	gs "github.com/rafrombrc/gospec/src/gospec"
 	"os"
 	"path/filepath"
