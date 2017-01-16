@@ -22,7 +22,7 @@ find_package(Protobuf 2.3 QUIET)
 set(CPACK_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}_${CPACK_PACKAGE_VERSION_MINOR}_${CPACK_PACKAGE_VERSION_PATCH}-${GO_PLATFORM}-${GO_ARCH})
 set(CMAKE_INSTALL_PREFIX ${CMAKE_PROJECT_NAME})
 set(PROJECT_PATH "${CMAKE_BINARY_DIR}/heka")
-set(HEKA_PATH "${PROJECT_PATH}/src/github.com/vicglarson/heka")
+set(HEKA_PATH "${PROJECT_PATH}/src/github.com/mozilla-services/heka")
 set(LUA_INCLUDE_PATH "${PROJECT_PATH}/include")
 set(LUA_LIB_PATH "${PROJECT_PATH}/lib")
 set(HEKA_EXE "${PROJECT_PATH}/bin/hekad${CMAKE_EXECUTABLE_SUFFIX}")
@@ -43,12 +43,12 @@ if (NOT INCLUDE_GEOIP)
 else()
     message(STATUS "GeoIP.h found. Enabling GeoIP plugin.")
     set(TAGS "${TAGS} geoip")
-    set(PLUGIN_LOADER ${PLUGIN_LOADER} "github.com/vicglarson/heka/plugins/geoip")
+    set(PLUGIN_LOADER ${PLUGIN_LOADER} "github.com/mozilla-services/heka/plugins/geoip")
 endif()
 
 if (INCLUDE_DOCKER_PLUGINS)
     message(STATUS "Docker plugins enabled.")
-    set(PLUGIN_LOADER ${PLUGIN_LOADER} "github.com/vicglarson/heka/plugins/docker")
+    set(PLUGIN_LOADER ${PLUGIN_LOADER} "github.com/mozilla-services/heka/plugins/docker")
 endif()
 
 option(BENCHMARK "Enable the benchmark tests" off)
@@ -162,7 +162,7 @@ WORKING_DIRECTORY "${HEKA_PATH}/message"
 add_dependencies(mocks message_matcher_parser)
 
 add_custom_target(hekad ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} -tags=${TAGS} github.com/vicglarson/heka/cmd/hekad
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} -tags=${TAGS} github.com/mozilla-services/heka/cmd/hekad
 DEPENDS mocks)
 
 if (INCLUDE_DOCUMENTATION)
@@ -195,41 +195,41 @@ endif()
 install(PROGRAMS "${HEKA_EXE}" DESTINATION bin)
 
 add_custom_target(flood ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/vicglarson/heka/cmd/heka-flood
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/mozilla-services/heka/cmd/heka-flood
 DEPENDS hekad
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 install(PROGRAMS "${FLOOD_EXE}" DESTINATION bin)
 
 add_custom_target(inject ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/vicglarson/heka/cmd/heka-inject
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/mozilla-services/heka/cmd/heka-inject
 DEPENDS hekad
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 install(PROGRAMS "${INJECT_EXE}" DESTINATION bin)
 
 add_custom_target(logstreamer ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/vicglarson/heka/cmd/heka-logstreamer
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/mozilla-services/heka/cmd/heka-logstreamer
 DEPENDS hekad
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 install(PROGRAMS "${LOGSTREAMER_EXE}" DESTINATION bin)
 
 add_custom_target(heka-cat ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/vicglarson/heka/cmd/heka-cat
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/mozilla-services/heka/cmd/heka-cat
 DEPENDS hekad
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 install(PROGRAMS "${HEKA_CAT_EXE}" DESTINATION bin)
 
 add_custom_target(sbmgr ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/vicglarson/heka/cmd/heka-sbmgr
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/mozilla-services/heka/cmd/heka-sbmgr
 DEPENDS hekad)
 
 install(PROGRAMS "${SBMGR_EXE}" DESTINATION bin)
 
 add_custom_target(sbmgrload ALL
-${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/vicglarson/heka/cmd/heka-sbmgrload
+${GO_EXECUTABLE} install -compiler ${COMPILER_OPTION} ${LDFLAGS} github.com/mozilla-services/heka/cmd/heka-sbmgrload
 DEPENDS hekad)
 
 ## DEBIAN SPECIFIC THINGS HERE
@@ -253,38 +253,38 @@ endif()
 # MOVING INCLUSION OF CPACK DOWN HERE SO IT ACTUALLY GETS THE VARIABLES WE SET
 include(CPack)
 
-add_test(cmd/hekad ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/cmd/hekad)
-add_test(message ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/message)
-add_test(pipeline ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/pipeline)
-add_test(plugins ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins)
-add_test(plugins/amqp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/amqp)
-add_test(plugins/dasher ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/dasher)
-add_test(plugins/elasticsearch ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/elasticsearch)
-add_test(plugins/file ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/file)
+add_test(cmd/hekad ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/cmd/hekad)
+add_test(message ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/message)
+add_test(pipeline ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/pipeline)
+add_test(plugins ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins)
+add_test(plugins/amqp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/amqp)
+add_test(plugins/dasher ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/dasher)
+add_test(plugins/elasticsearch ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/elasticsearch)
+add_test(plugins/file ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/file)
 if (INCLUDE_GEOIP)
-    add_test(plugins/geoip  ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} -tags=${TAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/geoip)
+    add_test(plugins/geoip  ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} -tags=${TAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/geoip)
 endif()
-add_test(plugins/graphite ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/graphite)
-add_test(plugins/http ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/http)
-add_test(plugins/irc ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/irc)
-add_test(plugins/kafka ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} -timeout 15s  ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/kafka)
-add_test(plugins/logstreamer ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/logstreamer)
-add_test(plugins/nagios ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/nagios)
-add_test(plugins/payload ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/payload)
-add_test(plugins/process ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/process)
-add_test(plugins/smtp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/smtp)
-add_test(plugins/statsd ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/statsd)
-add_test(plugins/tcp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/tcp)
-add_test(plugins/udp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/plugins/udp)
-add_test(logstreamer ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/logstreamer)
-add_test(client ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/client)
+add_test(plugins/graphite ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/graphite)
+add_test(plugins/http ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/http)
+add_test(plugins/irc ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/irc)
+add_test(plugins/kafka ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} -timeout 15s  ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/kafka)
+add_test(plugins/logstreamer ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/logstreamer)
+add_test(plugins/nagios ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/nagios)
+add_test(plugins/payload ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/payload)
+add_test(plugins/process ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/process)
+add_test(plugins/smtp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/smtp)
+add_test(plugins/statsd ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/statsd)
+add_test(plugins/tcp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/tcp)
+add_test(plugins/udp ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/plugins/udp)
+add_test(logstreamer ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/logstreamer)
+add_test(client ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/client)
 if(INCLUDE_SANDBOX)
-    add_test(sandbox_move_modules cmake -E copy_directory ${CMAKE_BINARY_DIR}/heka/lib/luasandbox/modules ${CMAKE_BINARY_DIR}/heka/src/github.com/vicglarson/heka/sandbox/lua/modules)
-    add_test(sandbox ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/sandbox/lua)
-    add_test(sandbox_plugins ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka/sandbox/plugins)
+    add_test(sandbox_move_modules cmake -E copy_directory ${CMAKE_BINARY_DIR}/heka/lib/luasandbox/modules ${CMAKE_BINARY_DIR}/heka/src/github.com/mozilla-services/heka/sandbox/lua/modules)
+    add_test(sandbox ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/sandbox/lua)
+    add_test(sandbox_plugins ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${LDFLAGS} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka/sandbox/plugins)
 endif()
 if (INCLUDE_MOZSVC)
-    add_test(mozsvc ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/vicglarson/heka-mozsvc-plugins)
+    add_test(mozsvc ${GO_EXECUTABLE} test -compiler ${COMPILER_OPTION} ${BENCHMARK_FLAG} ${COVERAGE_FLAG} github.com/mozilla-services/heka-mozsvc-plugins)
 endif()
 install(FILES "${HEKA_PATH}/cmd/heka-sbmgr/sbmgr.toml" "${HEKA_PATH}/cmd/heka-sbmgr/hekad.toml.sbmgr" DESTINATION bin)
 if(INCLUDE_SANDBOX)
